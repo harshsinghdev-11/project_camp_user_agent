@@ -67,11 +67,19 @@ def agent_run(
 
     set_access_token(token)
     try:
-        result = run_agent(query)
+        history = [
+            {"role": turn.role, "content": turn.content}
+            for turn in body.history
+        ]
+        working_memory = (
+            body.working_memory.model_dump() if body.working_memory else None
+        )
+        result = run_agent(query, history, working_memory)
         return AgentRunResponse(
             ok=True,
             answer=result["answer"],
             messages=result.get("messages") or [],
+            working_memory_patch=result.get("working_memory_patch"),
         )
     except RuntimeError as exc:
         # Missing GROQ_API_KEY or similar configuration errors

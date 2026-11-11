@@ -2,16 +2,25 @@
 
 from __future__ import annotations
 
+import os
+
 import uvicorn
 
 
 def main() -> None:
-    """Start the FastAPI agent server (default :8000)."""
+    """Start the FastAPI agent server.
+
+    Respects ``PORT`` (Render / cloud default) and enables reload only when
+    ``RELOAD`` is truthy (``1`` / ``true`` / ``yes``) for local development.
+    """
+    port = int(os.getenv("PORT", "8000"))
+    reload = os.getenv("RELOAD", "").strip().lower() in {"1", "true", "yes"}
+
     uvicorn.run(
         "user_agent.api.app:app",
         host="0.0.0.0",
-        port=8000,
-        reload=True,
+        port=port,
+        reload=reload,
     )
 
 

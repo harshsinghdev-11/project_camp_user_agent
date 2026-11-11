@@ -29,18 +29,27 @@ cp .env.example .env   # set GROQ_API_KEY
 |---|---|---|
 | `GROQ_API_KEY` | — | Required Groq API key |
 | `GROQ_MODEL` | `llama-3.3-70b-versatile` | Chat model with tool calling |
-| `NODE_API_BASE_URL` | `http://localhost:3000/api/v1` | Node REST base |
+| `NODE_API_BASE_URL` | `http://localhost:3000/api/v1` | Node REST base (use public URL in production) |
+| `PORT` | `8000` | Listen port (Render sets this automatically) |
+| `RELOAD` | off | Set `true` for local auto-reload only |
 
 ## Run
 
 ```bash
-uv run uvicorn user_agent.api.app:app --reload --port 8000
+# Local (with reload)
+RELOAD=true uv run user-agent
 # or
-uv run user-agent
+uv run uvicorn user_agent.api.app:app --reload --host 0.0.0.0 --port 8000
+```
+
+**Render start command:**
+
+```bash
+uvicorn user_agent.api.app:app --host 0.0.0.0 --port $PORT
 ```
 
 - Docs: http://localhost:8000/docs
-- Health: `GET /health`
+- Health: `GET /health` (use this as Render health check path)
 
 ## API
 
